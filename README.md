@@ -1,17 +1,17 @@
 # Food Delivery App - Alt Backends
 
-This repository contains alternate backend implementations for the [Food Delivery App](https://github.com/temporalio/samples-typescript/tree/main/food-delivery).
+This repository contains alternate Temporal (worker & workflow) backend implementations for the [Food Delivery App](https://github.com/temporalio/samples-typescript/tree/main/food-delivery).
 
-The original Food Delivery sample is fully implemented in TypeScript, both the frontend and the backend.  It is a wonderful example of a full stack application using the Temporal TypeScript SDK.  If you have not yet explored that example, please do so along with the excellent companion blog posts:
+The original Food Delivery sample is fully implemented in TypeScript, both the frontend (UI & API server) and the Temporal backend.  It is a wonderful example of a full stack application using the Temporal TypeScript SDK.  If you have not yet explored that example, please do so along with the excellent companion blog posts:
 * [Building Reliable Distributed Systems in Node.js](https://temporal.io/blog/building-reliable-distributed-systems-in-node)
 * [How Durable Execution Works](https://temporal.io/blog/building-reliable-distributed-systems-in-node-js-part-2)
 
 ## Frontend & API Server
-The frontend app in this repo is effectively the same as the original Food Delivery App frontend. The code has been copied into this repository for convenience, with minimal changes to support the alternate backend implementations.
+The frontend apps in this repo are effectively the same as the original Food Delivery App frontends.  These are the `menu` app and the `driver` app. The code has been copied into this repository for convenience, with minimal changes.
 
-To run the frontend, see [frontend/README.md](frontend/README.md).
+To run the frontend apps, see [frontend/README.md](frontend/README.md).
 
-## Backend (Temporal Worker)
+## Backend (Temporal Worker & Workflow)
 This repository contains multiple alternate backends for the Food Delivery App.  Each backend is implemented in a different language and uses the corresponding Temporal SDK for that language.
 
 You will only need to run one of the backends at a time. To pick and run a backend, see [backend/README.md](backend/README.md).

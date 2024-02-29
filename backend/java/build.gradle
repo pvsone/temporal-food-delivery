@@ -1,0 +1,42 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    javaSDKVersion = '1.22.3'
+}
+
+dependencies {
+    implementation "io.temporal:temporal-sdk:$javaSDKVersion"
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+//    // Use JUnit test framework
+//    testImplementation "io.temporal:temporal-testing:$javaSDKVersion"
+//    testImplementation "junit:junit:4.13.2"
+//    testImplementation "org.mockito:mockito-core:5.6.0"
+//    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+//    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+application {
+    mainClass = 'com.example.worker.Main'
+}
+
+//task runWorker(type: JavaExec) {
+//    mainClass = 'com.example.worker.Main'
+//    classpath = sourceSets.main.runtimeClasspath
+//}

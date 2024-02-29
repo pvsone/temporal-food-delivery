@@ -1,6 +1,6 @@
 # Frontend
 
-## Running this sample
+## Running the frontend
 1. `yarn` to install dependencies (to install yarn, run `npm install --global yarn`)
 1. `yarn dev` to start the Next.js dev servers.
 1. Interact with the sites:

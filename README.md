@@ -1,4 +1,4 @@
-# Food Delivery App - Alt
+# Food Delivery App - Alt Backends
 
 This repository contains alternate backend implementations for the [Food Delivery App](https://github.com/temporalio/samples-typescript/tree/main/food-delivery).
 

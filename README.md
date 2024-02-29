@@ -6,7 +6,7 @@ The original Food Delivery sample is fully implemented in TypeScript, both the f
 * [Building Reliable Distributed Systems in Node.js](https://temporal.io/blog/building-reliable-distributed-systems-in-node)
 * [How Durable Execution Works](https://temporal.io/blog/building-reliable-distributed-systems-in-node-js-part-2)
 
-## Frontend & API Server
+## Frontend (UI & API Server)
 The frontend apps in this repo are effectively the same as the original Food Delivery App frontends.  These are the `menu` app and the `driver` app. The code has been copied into this repository for convenience, with minimal changes.
 
 To run the frontend apps, see [frontend/README.md](frontend/README.md).

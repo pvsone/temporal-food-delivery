@@ -1,0 +1,19 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["NODE_ENV", "TEMPORAL_ADDRESS", "TEMPORAL_NAMESPACE", "TEMPORAL_TLS_CERT", "TEMPORAL_TLS_KEY"],
+      "outputs": ["lib/**", ".next/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
+    },
+    "start": {}
+  }
+}

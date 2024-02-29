@@ -1,0 +1,28 @@
+{
+  "name": "food-delivery",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build --parallel",
+    "dev": "turbo run dev --parallel",
+    "start": "turbo run start --parallel",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "eslint-config-food": "*",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.1.12",
+    "turbo": "^1.11.3",
+    "vercel": "^29.0.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "packageManager": "yarn@1.22.19"
+}

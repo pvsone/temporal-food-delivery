@@ -34,7 +34,7 @@ export TEMPORAL_ADDRESS=<your_namespace>.<your_account>.tmprl.cloud:7233
 export TEMPORAL_NAMESPACE=<your_namespace>.<your_account>
 export TEMPORAL_TLS_CERT=/path/to/client.crt
 export TEMPORAL_TLS_KEY=/path/to/client.key
-export TEMPORAL_TLS_KEY_PKCS8=/path/to/pkcs8/client.key
+export TEMPORAL_TLS_KEY_PKCS8=/path/to/pkcs8_client.key
 ```
 
 *The `TEMPORAL_TLS_KEY_PKCS8` environment variable is __only__ required if you are using the __Java__ backend.*

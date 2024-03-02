@@ -1,1 +1,3 @@
-TODO
+```bash
+dotnet run
+```

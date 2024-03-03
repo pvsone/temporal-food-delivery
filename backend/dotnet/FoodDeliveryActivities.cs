@@ -8,14 +8,14 @@ public record Product(int Id, string Name, int Cents);
 
 public class FoodDeliveryActivities
 {
-    private static readonly double SimulatedFailureRate = 0.0;
+    private static readonly double SimulatedFailureRate = 0.5;
 
     [Activity]
     public static async Task<Product> GetProductAsync(int productId)
     {
         if (Products.TryGetValue(productId, out var product))
         {
-            await Task.Delay(100);
+            await Task.Delay(100); // simulate delay
             return product;
         }
         else
@@ -32,7 +32,7 @@ public class FoodDeliveryActivities
             throw new Exception("Failed to send push notification. Unable to reach notification service.");
         }
 
-        await Task.Delay(100);
+        await Task.Delay(100); // simulate delay
 
         ActivityExecutionContext.Current.Logger.LogInformation("Sent notification {Type}, {Message}", "push", message);
         return "success";
@@ -57,7 +57,7 @@ public class FoodDeliveryActivities
             throw new Exception("Failed to charge. Unable to reach payment service.");
         }
 
-        await Task.Delay(100);
+        await Task.Delay(100); // simulate delay
 
         ctx.Logger.LogInformation("Charged {Cents}", product.Cents);
         return "success";
@@ -77,7 +77,7 @@ public class FoodDeliveryActivities
             throw new Exception("Failed to refund. Unable to reach payment service.");
         }
 
-        await Task.Delay(100);
+        await Task.Delay(100); // simulate delay
 
         ctx.Logger.LogInformation("Refunded {Cents}", product.Cents);
         return "success";

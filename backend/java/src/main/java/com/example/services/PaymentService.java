@@ -19,7 +19,7 @@ public class PaymentService {
             throw ApplicationFailure.newNonRetryableFailure("Card declined: insufficient funds", "InsufficientFunds");
         }
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < ServiceConstants.SIMULATED_FAILURE_RATE) {
             throw new RuntimeException("Failed to charge. Unable to reach payment service.");
         }
 
@@ -34,7 +34,7 @@ public class PaymentService {
         String idempotencyToken = info.getWorkflowId() + "-refund";
         logger.debug("Idempotency Token {}", idempotencyToken);
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < ServiceConstants.SIMULATED_FAILURE_RATE) {
             throw new RuntimeException("Failed to refund. Unable to reach payment service.");
         }
 

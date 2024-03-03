@@ -25,7 +25,7 @@ public class ProductService {
         }
 
         try {
-            TimeUnit.MILLISECONDS.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(100); // simulate delay
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
         }

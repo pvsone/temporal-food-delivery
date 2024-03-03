@@ -31,6 +31,7 @@ public class OrderWorkflow
         }
         catch (Exception e)
         {
+            orderStatus.State = OrderStates.FAILED;
             string message = string.Format("Failed to charge customer for {0}. Error: {1}", product.Name, e.Message);
             await SendPushNotificationAsync(message, options);
             throw new ApplicationFailureException(message);

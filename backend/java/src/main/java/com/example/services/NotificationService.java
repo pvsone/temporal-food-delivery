@@ -10,12 +10,12 @@ public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     public static String sendNotification(String type, String message) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < ServiceConstants.SIMULATED_FAILURE_RATE) {
             throw new RuntimeException(String.format("Failed to send %s notification. Unable to reach notification service.", type));
         }
 
         try {
-            TimeUnit.MILLISECONDS.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(100); // simulate delay
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
         }

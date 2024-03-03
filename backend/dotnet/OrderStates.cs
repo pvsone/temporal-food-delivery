@@ -17,6 +17,8 @@ public enum OrderStates
     DELIVERED,
     [Description("Refunding")]
     REFUNDING,
+    [Description("Failed")]
+    FAILED,
 }
 
 public class OrderStatesConverter : JsonConverter<OrderStates>

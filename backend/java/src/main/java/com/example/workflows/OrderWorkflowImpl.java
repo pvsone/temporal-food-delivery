@@ -30,21 +30,23 @@ public class OrderWorkflowImpl implements OrderWorkflow {
 
     @Override
     public String order(int productId) {
+        // lookup the product
         Product product = activities.getProduct(productId);
 
+        // charge the customers
         orderStatus = new OrderStatus(productId, OrderStates.CHARGING_CARD, null);
-
         try {
             activities.chargeCustomer(product);
         } catch (Exception e) {
+            orderStatus.setState(OrderStates.FAILED);
             String message = String.format("Failed to charge customer for %s. Error: %s}", product.getName(), e.getMessage());
             activities.sendPushNotification(message);
             throw ApplicationFailure.newFailureWithCause(message, e.getClass().getName(), e.getCause());
         }
-
         orderStatus.setState(OrderStates.PAID);
 
-        boolean notPickedUpInTime = !Workflow.await(Duration.ofSeconds(60), () -> orderStatus.getState() == OrderStates.PICKED_UP);
+        // wait for the order to be picked up, or timeout and refund
+        boolean notPickedUpInTime = !Workflow.await(Duration.ofSeconds(30), () -> orderStatus.getState() == OrderStates.PICKED_UP);
         if (notPickedUpInTime) {
             orderStatus.setState(OrderStates.REFUNDING);
             refundAndNotify(
@@ -53,10 +55,10 @@ public class OrderWorkflowImpl implements OrderWorkflow {
             );
             throw ApplicationFailure.newFailure("Not picked up in time", "NotPickedUpInTime");
         }
-
         activities.sendPushNotification("🚗  Order picked up");
 
-        boolean notDeliveredInTime = !Workflow.await(Duration.ofSeconds(60), () -> orderStatus.getState() == OrderStates.DELIVERED);
+        // wait for the order to be delivered, or timeout and refund
+        boolean notDeliveredInTime = !Workflow.await(Duration.ofSeconds(30), () -> orderStatus.getState() == OrderStates.DELIVERED);
         if (notDeliveredInTime) {
             orderStatus.setState(OrderStates.REFUNDING);
             refundAndNotify(
@@ -65,11 +67,9 @@ public class OrderWorkflowImpl implements OrderWorkflow {
             );
             throw ApplicationFailure.newFailure("Not delivered in time", "NotDeliveredInTime");
         }
-
         activities.sendPushNotification("✅  Order delivered!");
 
-        Workflow.sleep(Duration.ofMinutes(1)); // this could also be hours or even months
-
+        Workflow.sleep(Duration.ofSeconds(30)); // this could also be hours or even months
         activities.sendPushNotification(String.format("✍️  Rate your meal. How was the %s?", product.getName()));
 
         return "success";

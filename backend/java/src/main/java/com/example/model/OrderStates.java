@@ -7,7 +7,8 @@ public enum OrderStates {
     PAID("Paid"),
     PICKED_UP("Picked up"),
     DELIVERED("Delivered"),
-    REFUNDING("Refunding");
+    REFUNDING("Refunding"),
+    FAILED("Failed");
 
     private final String displayValue;
 

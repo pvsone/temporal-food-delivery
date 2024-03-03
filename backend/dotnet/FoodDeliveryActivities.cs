@@ -1,13 +1,15 @@
-namespace FoodDelivery;
-
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 using Temporalio.Exceptions;
+
+namespace FoodDelivery;
 
 public record Product(int Id, string Name, int Cents);
 
 public class FoodDeliveryActivities
 {
+    private static readonly double SimulatedFailureRate = 0.0;
+
     [Activity]
     public static async Task<Product> GetProductAsync(int productId)
     {
@@ -25,8 +27,7 @@ public class FoodDeliveryActivities
     [Activity]
     public static async Task<string> SendPushNotificationAsync(string message)
     {
-        Random random = new Random();
-        if (random.NextDouble() < 0.5)
+        if (new Random().NextDouble() < SimulatedFailureRate)
         {
             throw new Exception("Failed to send push notification. Unable to reach notification service.");
         }
@@ -51,8 +52,7 @@ public class FoodDeliveryActivities
             throw new ApplicationFailureException("Card declined: insufficient funds", nonRetryable: true);
         }
 
-        Random random = new Random();
-        if (random.NextDouble() < 0.5)
+        if (new Random().NextDouble() < SimulatedFailureRate)
         {
             throw new Exception("Failed to charge. Unable to reach payment service.");
         }
@@ -72,8 +72,7 @@ public class FoodDeliveryActivities
         var idempotencyToken = $"{ctx.Info.WorkflowId}-charge";
         ctx.Logger.LogDebug("Idempotency Token {IdempotencyToken}", idempotencyToken);
 
-        Random random = new Random();
-        if (random.NextDouble() < 0.5)
+        if (new Random().NextDouble() < SimulatedFailureRate)
         {
             throw new Exception("Failed to refund. Unable to reach payment service.");
         }

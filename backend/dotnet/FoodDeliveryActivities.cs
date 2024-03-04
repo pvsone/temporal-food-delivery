@@ -8,7 +8,7 @@ public record Product(int Id, string Name, int Cents);
 
 public class FoodDeliveryActivities
 {
-    private static readonly double SimulatedFailureRate = 0.5;
+    private static readonly double ChaosFactor = 0.5;
 
     [Activity]
     public static async Task<Product> GetProductAsync(int productId)
@@ -27,7 +27,7 @@ public class FoodDeliveryActivities
     [Activity]
     public static async Task<string> SendPushNotificationAsync(string message)
     {
-        if (new Random().NextDouble() < SimulatedFailureRate)
+        if (new Random().NextDouble() < ChaosFactor)
         {
             throw new Exception("Failed to send push notification. Unable to reach notification service.");
         }
@@ -52,7 +52,7 @@ public class FoodDeliveryActivities
             throw new ApplicationFailureException("Card declined: insufficient funds", nonRetryable: true);
         }
 
-        if (new Random().NextDouble() < SimulatedFailureRate)
+        if (new Random().NextDouble() < ChaosFactor)
         {
             throw new Exception("Failed to charge. Unable to reach payment service.");
         }
@@ -72,7 +72,7 @@ public class FoodDeliveryActivities
         var idempotencyToken = $"{ctx.Info.WorkflowId}-charge";
         ctx.Logger.LogDebug("Idempotency Token {IdempotencyToken}", idempotencyToken);
 
-        if (new Random().NextDouble() < SimulatedFailureRate)
+        if (new Random().NextDouble() < ChaosFactor)
         {
             throw new Exception("Failed to refund. Unable to reach payment service.");
         }

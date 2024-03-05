@@ -33,7 +33,7 @@ public class OrderWorkflowImpl implements OrderWorkflow {
         // lookup the product
         Product product = activities.getProduct(productId);
 
-        // charge the customers
+        // charge the customer
         orderStatus = new OrderStatus(productId, OrderStates.CHARGING_CARD, null);
         try {
             activities.chargeCustomer(product);

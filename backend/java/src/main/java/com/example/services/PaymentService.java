@@ -19,9 +19,11 @@ public class PaymentService {
             throw ApplicationFailure.newNonRetryableFailure("Card declined: insufficient funds", "InsufficientFunds");
         }
 
-        if (Math.random() < ServiceConstants.CHAOS_FACTOR) {
+        if (Math.random() < CommonService.CHAOS_FACTOR) {
             throw new RuntimeException("Failed to charge. Unable to reach payment service.");
         }
+
+        CommonService.delay(50); // simulate delay
 
         logger.info("Charged {}", cents);
         return "success";
@@ -34,9 +36,11 @@ public class PaymentService {
         String idempotencyToken = info.getWorkflowId() + "-refund";
         logger.debug("Idempotency Token {}", idempotencyToken);
 
-        if (Math.random() < ServiceConstants.CHAOS_FACTOR) {
+        if (Math.random() < CommonService.CHAOS_FACTOR) {
             throw new RuntimeException("Failed to refund. Unable to reach payment service.");
         }
+
+        CommonService.delay(50); // simulate delay
 
         logger.info("Refunded {}", cents);
         return "success";

@@ -24,11 +24,7 @@ public class ProductService {
             throw ApplicationFailure.newNonRetryableFailure(String.format("Product %s not found", id), "ProductNotFound");
         }
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(100); // simulate delay
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage());
-        }
+        CommonService.delay(50); // simulate delay
 
         return product;
     }

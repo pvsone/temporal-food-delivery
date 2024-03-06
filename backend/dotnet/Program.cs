@@ -3,10 +3,26 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
 
+var address = GetEnv("TEMPORAL_ADDRESS", "127.0.0.1:7233");
+var temporalNamespace = GetEnv("TEMPORAL_NAMESPACE", "default");
+var tlsCertPath = GetEnv("TEMPORAL_TLS_CERT", string.Empty);
+var tlsKeyPath = GetEnv("TEMPORAL_TLS_KEY", string.Empty);
+
+TlsOptions? tls = null;
+if (!string.IsNullOrEmpty(tlsCertPath) && !string.IsNullOrEmpty(tlsKeyPath))
+{
+    tls = new()
+    {
+        ClientCert = await File.ReadAllBytesAsync(tlsCertPath),
+        ClientPrivateKey = await File.ReadAllBytesAsync(tlsKeyPath),
+    };
+}
+
 var client = await TemporalClient.ConnectAsync(new()
 {
-    TargetHost = "localhost:7233",
-    Namespace = "default",
+    TargetHost = address,
+    Namespace = temporalNamespace,
+    Tls = tls,
     LoggerFactory = LoggerFactory.Create(builder =>
         builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").SetMinimumLevel(LogLevel.Information)),
 });
@@ -35,4 +51,14 @@ try
 catch (OperationCanceledException)
 {
     Console.WriteLine("Worker cancelled");
+}
+
+static string GetEnv(string key, string fallback)
+{
+    string? value = Environment.GetEnvironmentVariable(key);
+    if (string.IsNullOrEmpty(value))
+    {
+        return fallback;
+    }
+    return value;
 }

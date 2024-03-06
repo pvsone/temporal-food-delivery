@@ -18,10 +18,7 @@ public class FoodDeliveryActivities
             await Task.Delay(50); // simulate delay
             return product;
         }
-        else
-        {
-            throw new ApplicationFailureException(string.Format("Product {0} not found", productId), nonRetryable: true);
-        }
+        throw new ApplicationFailureException(string.Format("Product {0} not found", productId), nonRetryable: true);
     }
 
     [Activity]

@@ -10,10 +10,10 @@ from activities import FoodDeliveryActivities
 from shared_objects import OrderStatus, OrderStates, Product
 
 
-@workflow.defn
+@workflow.defn(name="order")
 class OrderWorkflow:
     def __init__(self) -> None:
-        self.order_status = OrderStatus()
+        self.order_status = None
         self.retry_policy = RetryPolicy(maximum_interval=timedelta(seconds=5))
 
     @workflow.run
@@ -46,13 +46,14 @@ class OrderWorkflow:
             raise ApplicationError(message, type=e.type)
         self.order_status.state = OrderStates.PAID
 
-        not_picked_up_in_time = not workflow.wait_condition(
-            lambda: self.order_status.state == OrderStates.DELIVERED,
-            timeout=timedelta(seconds=30)
-        )
-        if not_picked_up_in_time:
+        try:
+            await workflow.wait_condition(
+                lambda: self.order_status.state == OrderStates.DELIVERED,
+                timeout=timedelta(seconds=30)
+            )
+        except asyncio.TimeoutError:
             self.order_status.state = OrderStates.REFUNDING
-            self.refund_and_notify(
+            await self.refund_and_notify(
                 product,
                 "⚠️  Your driver was unable to deliver your order. Your payment has been refunded."
             )
@@ -74,29 +75,29 @@ class OrderWorkflow:
 
         return "success"
 
-    @workflow.signal
+    @workflow.signal(name="pickedUp")
     def picked_up_signal(self):
         if self.order_status.state == OrderStates.PAID:
             self.order_status.state = OrderStates.PICKED_UP
 
-    @workflow.signal
+    @workflow.signal(name="delivered")
     def delivered_signal(self):
         if self.order_status.state == OrderStates.PICKED_UP:
             self.order_status.state = OrderStates.DELIVERED
-            self.order_status.delivered_at = datetime.now()
+            self.order_status.delivered_at = workflow.now()
 
-    @workflow.query
+    @workflow.query(name="getStatus")
     def get_status_query(self) -> OrderStatus:
         return self.order_status
 
-    def refund_and_notify(self, product: Product, message: str):
-        workflow.execute_activity_method(
+    async def refund_and_notify(self, product: Product, message: str):
+        await workflow.execute_activity_method(
             FoodDeliveryActivities.refund_order,
             product,
             start_to_close_timeout=timedelta(seconds=10),
             retry_policy=self.retry_policy
         )
-        workflow.execute_activity_method(
+        await workflow.execute_activity_method(
             FoodDeliveryActivities.send_push_notification,
             message,
             start_to_close_timeout=timedelta(seconds=10),

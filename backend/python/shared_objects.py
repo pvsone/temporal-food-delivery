@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from enum import Enum
 import datetime
@@ -10,7 +11,7 @@ class Product:
     cents: int
 
 
-class OrderStates(Enum):
+class OrderStates(str, Enum):
     CHARGING_CARD = "Charging card"
     PAID = "Paid"
     PICKED_UP = "Picked up"
@@ -21,7 +22,7 @@ class OrderStates(Enum):
 
 @dataclass
 class OrderStatus:
-    product_id: int
+    productId: int
     state: OrderStates
-    delivered_at: datetime
+    deliveredAt: datetime
 

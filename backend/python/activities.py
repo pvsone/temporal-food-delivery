@@ -7,7 +7,7 @@ from temporalio.exceptions import ApplicationError
 
 from shared_objects import Product
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 CHAOS_FACTOR = 0.5
 
 
@@ -34,34 +34,34 @@ class FoodDeliveryActivities:
 
         sleep(0.05)
 
-        logger.info("Sent notification {}, {}", type, message)
+        activity.logger.info("Sent notification push, %s" % message)
         return "success"
 
     @activity.defn
     def refund_order(self, product: Product) -> str:
         info = activity.info()
         idempotency_token = info.workflow_id + "-refund"
-        logger.debug("Idempotency Token {}", idempotency_token)
+        activity.logger.debug("Idempotency Token %s" % idempotency_token)
 
         if random() < CHAOS_FACTOR:
             raise ApplicationError("Failed to refund. Unable to reach payment service.")
 
         sleep(0.05)
 
-        logger.info("Refunded {}", product.cents)
+        activity.logger.info("Refunded %s" % product.cents)
         return "success"
 
     @activity.defn
     def charge_customer(self, product: Product) -> str:
         info = activity.info()
         idempotency_token = info.workflow_id + "-refund"
-        logger.debug("Idempotency Token {}", idempotency_token)
+        activity.logger.debug("Idempotency Token %s" % idempotency_token)
 
         if product.cents > 3500:
             raise ApplicationError("Card declined: insufficient funds", type="InsufficientFunds", non_retryable=True)
 
         if random() < CHAOS_FACTOR:
-            raise ApplicationError("Failed to refund. Unable to reach payment service.")
+            raise ApplicationError("Failed to charge customer. Unable to reach payment service.")
 
-        logger.info("Charged {}", product.cents)
+        activity.logger.info("Charged %s" % product.cents)
         return "success"

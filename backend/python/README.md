@@ -1,12 +1,14 @@
-1. Open a terminal window in the environment and change directories to the root directory of the
-`python` repository
-2. Run the following command to create a virtual environment
+# Python Backend
+
+## Running the Python backend 
+
+1. Run the following command to create a virtual environment
 
 ```
 $ python -m venv env
 ```
 
-3. Activate the virtual environment
+2. Activate the virtual environment
 
 ```
 $ source env/bin/activate
@@ -23,4 +25,10 @@ to below
 
 ```
 python -m pip install -r requirements.txt
+```
+
+5. Run the worker
+
+```
+python worker.py
 ```

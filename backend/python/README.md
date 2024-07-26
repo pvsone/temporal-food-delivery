@@ -29,4 +29,4 @@ python -m pip install -r requirements.txt
 
 ## Running the Python backend 
 
-`python worker.py` to start the worker program
+`python worker.py` to start the Temporal worker program.

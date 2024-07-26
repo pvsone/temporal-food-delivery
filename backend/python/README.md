@@ -1,6 +1,6 @@
 # Python Backend
 
-## Running the Python backend 
+## Setting up a virtual environment
 
 1. Run the following command to create a virtual environment
 
@@ -27,8 +27,6 @@ to below
 python -m pip install -r requirements.txt
 ```
 
-5. Run the worker
+## Running the Python backend 
 
-```
-python worker.py
-```
+`python worker.py` to start the worker program

@@ -15,20 +15,18 @@ async def main():
 
     activities = FoodDeliveryActivities()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as activity_executor:
-        worker = Worker(
-            client,
-            task_queue=TASK_QUEUE,
-            workflows=[OrderWorkflow],
-            activities=[
-                activities.get_product,
-                activities.charge_customer,
-                activities.refund_order,
-                activities.send_push_notification
-            ],
-            activity_executor=activity_executor
-        )
-        await worker.run()
+    worker = Worker(
+        client,
+        task_queue=TASK_QUEUE,
+        workflows=[OrderWorkflow],
+        activities=[
+            activities.get_product,
+            activities.charge_customer,
+            activities.refund_order,
+            activities.send_push_notification
+        ],
+    )
+    await worker.run()
 
 
 if __name__ == "__main__":

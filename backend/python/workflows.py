@@ -37,14 +37,23 @@ class OrderWorkflow:
         except ApplicationError as e:
             self.order_status.state = OrderStates.FAILED
             message = "Failed to charge customer for " + product.name + ". Error: " + e.message
-            await workflow.execute_activity_method(
-                FoodDeliveryActivities.send_push_notification,
-                message,
-                start_to_close_timeout=timedelta(seconds=10),
-                retry_policy=self.retry_policy
-            )
+            await self.send_push_notification(message)
             raise ApplicationError(message, type=e.type)
         self.order_status.state = OrderStates.PAID
+
+        try:
+            await workflow.wait_condition(
+                lambda: self.order_status.state == OrderStates.PICKED_UP,
+                timeout=timedelta(seconds=30)
+            )
+        except asyncio.TimeoutError:
+            self.order_status.state = OrderStates.REFUNDING
+            await self.refund_and_notify(
+                product,
+                "⚠️  No drivers were available to pick up your order. Your payment has been refunded."
+            )
+            raise ApplicationError("Not picked up in time", type="NotPickedUpInTime")
+        await self.send_push_notification("🚗  Order picked up")
 
         try:
             await workflow.wait_condition(
@@ -58,20 +67,10 @@ class OrderWorkflow:
                 "⚠️  Your driver was unable to deliver your order. Your payment has been refunded."
             )
             raise ApplicationError("Not delivered in time", type="NotDeliveredInTime")
-        await workflow.execute_activity_method(
-            FoodDeliveryActivities.send_push_notification,
-            "✅  Order delivered!",
-            start_to_close_timeout=timedelta(seconds=10),
-            retry_policy=self.retry_policy
-        )
+        await self.send_push_notification("✅  Order delivered!")
 
         await asyncio.sleep(30)
-        await workflow.execute_activity_method(
-            FoodDeliveryActivities.send_push_notification,
-            "✍️  Rate your meal. How was the " + product.name + "?",
-            start_to_close_timeout=timedelta(seconds=10),
-            retry_policy=self.retry_policy
-        )
+        await self.send_push_notification("✍️  Rate your meal. How was the " + product.name + "?")
 
         return "success"
 
@@ -97,6 +96,14 @@ class OrderWorkflow:
             start_to_close_timeout=timedelta(seconds=10),
             retry_policy=self.retry_policy
         )
+        await workflow.execute_activity_method(
+            FoodDeliveryActivities.send_push_notification,
+            message,
+            start_to_close_timeout=timedelta(seconds=10),
+            retry_policy=self.retry_policy
+        )
+
+    async def send_push_notification(self, message: str):
         await workflow.execute_activity_method(
             FoodDeliveryActivities.send_push_notification,
             message,

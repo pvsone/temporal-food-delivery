@@ -66,7 +66,7 @@ public class FoodDeliveryActivities
         var ctx = ActivityExecutionContext.Current;
 
         // In a real app, we would pass an idempotency token to the downstream service
-        var idempotencyToken = $"{ctx.Info.WorkflowId}-charge";
+        var idempotencyToken = $"{ctx.Info.WorkflowId}-refund";
         ctx.Logger.LogDebug("Idempotency Token {IdempotencyToken}", idempotencyToken);
 
         if (new Random().NextDouble() < ChaosFactor)

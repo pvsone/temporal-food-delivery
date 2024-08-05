@@ -19,6 +19,7 @@ class OrderWorkflow:
     @workflow.run
     async def order(self, product_id: int) -> str:
 
+        # lookup the product
         product = await workflow.execute_activity_method(
             FoodDeliveryActivities.get_product,
             product_id,
@@ -26,6 +27,7 @@ class OrderWorkflow:
             retry_policy=self.retry_policy
         )
 
+        # charge the customer
         self.order_status = OrderStatus(product_id, OrderStates.CHARGING_CARD, None)
         try:
             await workflow.execute_activity_method(
@@ -41,6 +43,7 @@ class OrderWorkflow:
             raise ApplicationError(message, type=e.type)
         self.order_status.state = OrderStates.PAID
 
+        # wait for the order to be picked up, or timeout and refund
         try:
             await workflow.wait_condition(
                 lambda: self.order_status.state == OrderStates.PICKED_UP,
@@ -55,6 +58,7 @@ class OrderWorkflow:
             raise ApplicationError("Not picked up in time", type="NotPickedUpInTime")
         await self.send_push_notification("🚗  Order picked up")
 
+        # wait for the order to be delivered, or timeout and refund
         try:
             await workflow.wait_condition(
                 lambda: self.order_status.state == OrderStates.DELIVERED,
@@ -69,6 +73,7 @@ class OrderWorkflow:
             raise ApplicationError("Not delivered in time", type="NotDeliveredInTime")
         await self.send_push_notification("✅  Order delivered!")
 
+        # wait for the customer to eat, then ask to rate the meal
         await asyncio.sleep(30)
         await self.send_push_notification("✍️  Rate your meal. How was the " + product.name + "?")
 

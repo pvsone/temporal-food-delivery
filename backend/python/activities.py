@@ -42,6 +42,8 @@ class FoodDeliveryActivities:
     @activity.defn
     async def refund_order(self, product: Product) -> str:
         info = activity.info()
+
+        # In a real app, we would pass an idempotency token to the downstream service
         idempotency_token = info.workflow_id + "-refund"
         activity.logger.debug("Idempotency Token %s" % idempotency_token)
 
@@ -56,6 +58,8 @@ class FoodDeliveryActivities:
     @activity.defn
     async def charge_customer(self, product: Product) -> str:
         info = activity.info()
+
+        # In a real app, we would pass an idempotency token to the downstream service
         idempotency_token = info.workflow_id + "-charge"
         activity.logger.debug("Idempotency Token %s" % idempotency_token)
 

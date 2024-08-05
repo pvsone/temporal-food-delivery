@@ -69,6 +69,7 @@ public class OrderWorkflowImpl implements OrderWorkflow {
         }
         activities.sendPushNotification("✅  Order delivered!");
 
+        // wait for the customer to eat, then ask to rate the meal
         Workflow.sleep(Duration.ofSeconds(30)); // this could also be hours or even months
         activities.sendPushNotification(String.format("✍️  Rate your meal. How was the %s?", product.getName()));
 

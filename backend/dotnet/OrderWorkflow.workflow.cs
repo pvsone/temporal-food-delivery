@@ -14,6 +14,14 @@ public class OrderWorkflow
         var logger = Workflow.Logger;
         var options = new ActivityOptions()
         {
+            TaskQueue = "durable-delivery-other-activity",
+            StartToCloseTimeout = TimeSpan.FromSeconds(10),
+            RetryPolicy = new() { MaximumInterval = TimeSpan.FromSeconds(5) },
+        };
+
+        var chargeOptions = new ActivityOptions()
+        {
+            TaskQueue = "durable-delivery-charge-activity",
             StartToCloseTimeout = TimeSpan.FromSeconds(10),
             RetryPolicy = new() { MaximumInterval = TimeSpan.FromSeconds(5) },
         };
@@ -27,7 +35,7 @@ public class OrderWorkflow
         try
         {
             await Workflow.ExecuteActivityAsync(
-                () => FoodDeliveryActivities.ChargeCustomerAsync(product), options);
+                () => FoodDeliveryActivities.ChargeCustomerAsync(product), chargeOptions);
         }
         catch (Exception e)
         {

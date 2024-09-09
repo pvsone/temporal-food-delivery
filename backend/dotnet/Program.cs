@@ -27,17 +27,35 @@ var client = await TemporalClient.ConnectAsync(new()
         builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").SetMinimumLevel(LogLevel.Information)),
 });
 
+TemporalWorker worker;
+switch (args.ElementAtOrDefault(0))
+{
+    case "workflow-worker":
+        worker = new TemporalWorker(
+            client, 
+            new TemporalWorkerOptions(taskQueue: "durable-delivery")
+                .AddWorkflow<OrderWorkflow>());
+        break;
+    case "activity-worker":
+        worker = new TemporalWorker(
+            client,
+            new TemporalWorkerOptions(taskQueue: "durable-delivery-other-activity")
+                .AddActivity(FoodDeliveryActivities.GetProductAsync)
+                .AddActivity(FoodDeliveryActivities.RefundOrderAsync)
+                .AddActivity(FoodDeliveryActivities.SendPushNotificationAsync));
+        break;
+    case "charge-worker":
+        worker = new TemporalWorker(
+            client,
+            new TemporalWorkerOptions(taskQueue: "durable-delivery-charge-activity")
+                .AddActivity(FoodDeliveryActivities.ChargeCustomerAsync));
+        break;
+    default:
+        throw new ArgumentException("Must pass 'workflow-worker', 'activity-worker', or 'charge-worker' as the single argument");
+}
+
 // Run worker until cancelled
 Console.WriteLine("Running worker");
-
-using var worker = new TemporalWorker(
-    client,
-    new TemporalWorkerOptions(taskQueue: "durable-delivery")
-        .AddActivity(FoodDeliveryActivities.ChargeCustomerAsync)
-        .AddActivity(FoodDeliveryActivities.GetProductAsync)
-        .AddActivity(FoodDeliveryActivities.RefundOrderAsync)
-        .AddActivity(FoodDeliveryActivities.SendPushNotificationAsync)
-        .AddWorkflow<OrderWorkflow>());
 
 // Run worker until ctrl+c
 using var cts = new CancellationTokenSource();

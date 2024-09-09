@@ -41,28 +41,27 @@ var promises_1 = require("fs/promises");
 exports.namespace = process.env.TEMPORAL_NAMESPACE || 'default';
 function getConnectionOptions() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, TEMPORAL_ADDRESS, _b, TEMPORAL_TLS_CERT, TEMPORAL_TLS_KEY, cert, key;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, TEMPORAL_ADDRESS, _b, TEMPORAL_TLS_CERT, TEMPORAL_TLS_KEY;
+        var _c, _d, _e;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
                 case 0:
                     _a = process.env.TEMPORAL_ADDRESS, TEMPORAL_ADDRESS = _a === void 0 ? 'localhost:7233' : _a;
                     _b = process.env, TEMPORAL_TLS_CERT = _b.TEMPORAL_TLS_CERT, TEMPORAL_TLS_KEY = _b.TEMPORAL_TLS_KEY;
                     if (!(TEMPORAL_TLS_CERT && TEMPORAL_TLS_KEY)) return [3 /*break*/, 3];
+                    _c = {
+                        address: TEMPORAL_ADDRESS
+                    };
+                    _d = {};
+                    _e = {};
                     return [4 /*yield*/, (0, promises_1.readFile)(TEMPORAL_TLS_CERT)];
                 case 1:
-                    cert = _c.sent();
+                    _e.crt = _f.sent();
                     return [4 /*yield*/, (0, promises_1.readFile)(TEMPORAL_TLS_KEY)];
-                case 2:
-                    key = _c.sent();
-                    return [2 /*return*/, {
-                            address: TEMPORAL_ADDRESS,
-                            tls: {
-                                clientCertPair: {
-                                    crt: cert,
-                                    key: key
-                                }
-                            }
-                        }];
+                case 2: return [2 /*return*/, (_c.tls = (_d.clientCertPair = (_e.key = _f.sent(),
+                        _e),
+                        _d),
+                        _c)];
                 case 3: return [2 /*return*/, {
                         address: TEMPORAL_ADDRESS
                     }];

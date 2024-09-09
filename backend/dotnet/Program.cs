@@ -32,8 +32,11 @@ Console.WriteLine("Running worker");
 
 using var worker = new TemporalWorker(
     client,
-    new TemporalWorkerOptions("durable-delivery")
-        .AddAllActivities(typeof(FoodDeliveryActivities), null)
+    new TemporalWorkerOptions(taskQueue: "durable-delivery")
+        .AddActivity(FoodDeliveryActivities.ChargeCustomerAsync)
+        .AddActivity(FoodDeliveryActivities.GetProductAsync)
+        .AddActivity(FoodDeliveryActivities.RefundOrderAsync)
+        .AddActivity(FoodDeliveryActivities.SendPushNotificationAsync)
         .AddWorkflow<OrderWorkflow>());
 
 // Run worker until ctrl+c
